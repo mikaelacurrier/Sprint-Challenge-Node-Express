@@ -1,16 +1,12 @@
 const express = require('express');
-const helmet = require('helmet');
-const morgan = require('morgan');
-
 
 
 const server = express();
 const project = require('./projectRouter');
 const action = require('./actionsRouter');
+const middleware = require('./config/middleware');
 
-server.use(helmet());
-server.use(morgan('dev'));
-server.use(express.json());
+middleware(server);
 
 //PROJECT REQUESTS
 server.use('/api/projects', project);
