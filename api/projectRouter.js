@@ -25,11 +25,11 @@ router.get('/:id', (req, res) => {
     });
 });
 router.post('/', (req, res) => {
-    const projectBody = req.body;
+    const {name, description } = req.body;
     if( !name  || !description ){
-        res.status(500).json({ message: "Invalid Entry" })
+        res.status(500).json({ message: "Invalid Entry - must include name and description" })
     }
-    projects.insert(projectBody)
+    projects.insert({name, description})
     .then(newProject => {
         res.json(newProject)
     })
@@ -52,19 +52,19 @@ router.put('/:id', (req, res) => {
         res.status(500).json({ message: "Unable to update project" });
     });
 });
-// router.delete('./:id', (req, res) => {
-//     const { id } = req.params;
-//     // if( !id ) {
-//     //     res.status(404).json({ message: "No project with that ID exists" })
-//     // };
-//     projects.remove(id)
-//     .then(count => {
-//         res.json(count)
-//     })
-//     .catch(err => {
-//         res.status(500).json({ message: "Project failed to delete" })
-//         console.log(err);
-//     });
-// });
+router.delete('/:id', (req, res) => {
+    const { id } = req.params;
+    // if( !id ) {
+    //     res.status(404).json({ message: "No project with that ID exists" })
+    // };
+    projects.remove(id)
+    .then(count => {
+        res.json(count)
+    })
+    .catch(err => {
+        res.status(500).json({ message: "Project failed to delete" })
+        console.log(err);
+    });
+});
 
 module.exports = router;
