@@ -27,8 +27,8 @@ router.get('/:id', (req, res) => {
 });
 router.post('/', (req, res) => {
     const { description, notes, project_id } = req.body;
-    if( !notes  || !description ){
-        res.status(500).json({ message: "Invalid Entry" })
+    if( !notes  || !description || description.length > 128 || !project_id ){
+        res.status(500).json({ message: "Invalid Entry - must have Project ID, description with 128 character or fewer, and notes" })
     }
     actions.insert({ description, notes, project_id })
     .then(action => {
@@ -40,11 +40,11 @@ router.post('/', (req, res) => {
 });
 router.put('/:id', (req, res) => {
     const { id } = req.params;
-    const projectBody = req.body;
-    if(projectBody === null) {
-        res.status(500).json({ message: "must have input"})
+    const { description, notes, project_id } = req.body;
+    if(!description || !notes || !project_id || description.length > 128) {
+        res.status(500).json({ message: "Invalid Entry - must have Project ID, description with 128 character or fewer, and notes"})
     };
-    actions.update(id, projectBody)
+    actions.update(id, { description, notes, project_id })
     .then(count => {
         res.json(count)
     })

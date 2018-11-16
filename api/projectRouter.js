@@ -24,9 +24,19 @@ router.get('/:id', (req, res) => {
         res.status(500).json({ message: "There is not a project with that id"});
     });
 });
+router.get('/actions/:id', (req, res) => {
+    const { id } = req.params;
+    projects.getProjectActions(id)
+    .then(projActions => {
+        res.json(projActions)
+    })
+    .catch(err => {
+        res.status(500).json({ message: "Unable to retrieve actions" });
+    });
+});
 router.post('/', (req, res) => {
     const {name, description } = req.body;
-    if( !name  || !description ){
+    if( !name  || !description || name.length > 128 ){
         res.status(500).json({ message: "Invalid Entry - must include name and description" })
     }
     projects.insert({name, description})
@@ -40,11 +50,11 @@ router.post('/', (req, res) => {
 });
 router.put('/:id', (req, res) => {
     const { id } = req.params;
-    const projectBody = req.body;
-    if(!projectBody) {
-        res.status(500).json({ message: "must have input"})
+    const {name, description } = req.body;
+    if(!name || !description || name.length > 128 ){
+        res.status(500).json({ message: "Invalid Entry - must include name and description"})
     };
-    projects.update(id, projectBody)
+    projects.update(id, {name, description })
     .then(count => {
         res.json(count)
     })
@@ -54,9 +64,9 @@ router.put('/:id', (req, res) => {
 });
 router.delete('/:id', (req, res) => {
     const { id } = req.params;
-    // if( !id ) {
-    //     res.status(404).json({ message: "No project with that ID exists" })
-    // };
+    if( !id ) {
+        res.status(404).json({ message: "No project with that ID exists" })
+    };
     projects.remove(id)
     .then(count => {
         res.json(count)
