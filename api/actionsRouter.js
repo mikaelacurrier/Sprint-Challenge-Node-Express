@@ -1,7 +1,18 @@
 const express = require('express');
 const actions = require('../data/helpers/actionModel');
+const projects = require('../data/helpers/projectModel');
 
 const router = express.Router();
+
+let projectNumb = [];
+
+function getNumb = 
+router.get('/', (req, res) => {
+    const { id } = req.params;
+    projects.get()
+    .then(projectNumb = id)
+});
+console.log(projectNumb);
 
 router.get('/', (req, res) => {
     if(req.body === null){
@@ -25,8 +36,10 @@ router.get('/:id', (req, res) => {
         res.status(500).json({ message: "There is not a project with that id"});
     });
 });
+
 router.post('/', (req, res) => {
     const { description, notes, project_id } = req.body;
+    //if (project_id !== activeProjects)
     if( !notes  || !description || description.length > 128 || !project_id ){
         res.status(500).json({ message: "Invalid Entry - must have Project ID, description with 128 character or fewer, and notes" })
     }
